@@ -9,6 +9,13 @@ from .agents import arovi_root_agent, APP_NAME
 from dotenv import load_dotenv
 load_dotenv()
 
+import os
+
+API_KEY = os.getenv("GOOGLE_API_KEY")
+if not API_KEY:
+    raise ValueError("GOOGLE_API_KEY not found in environment. Set it in .env.")
+
+
 
 USER_ID = "demo_user"
 SESSION_ID = "arovi_session_1"
