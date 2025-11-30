@@ -73,18 +73,23 @@ Each stage writes structured outputs into `session.state` via `output_key`, enab
 
 ```bash
 pip install -r requirements.txt
+```
 
 2. Set your GenAI / Vertex environment (Google AI Studio or Vertex AI):
 
+```bash
 export GOOGLE_API_KEY="YOUR_API_KEY"
 # and optionally:
 # export GOOGLE_GENAI_USE_VERTEXAI=TRUE
 # export GOOGLE_CLOUD_PROJECT="your-project"
 # export GOOGLE_CLOUD_LOCATION="us-central1"
+```
 
 3. Run the test harness:
 
+```bash
 python -m arovi_agent.runner
+```
 
 
 You should see Arovi generate a sample public-health briefing for Chicago (or whatever city you set in runner.py).
