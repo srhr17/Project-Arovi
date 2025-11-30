@@ -1,0 +1,52 @@
+# -------------------------
+# Python & Build Artifacts
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+
+# -------------------------
+# Virtual Environments
+# -------------------------
+.venv/
+venv/
+env/
+
+# -------------------------
+# Environment / Secrets
+# -------------------------
+.env
+*.env
+.env.*
+
+# -------------------------
+# OS-specific junk
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# IDE / Editor folders
+# -------------------------
+.vscode/
+.idea/
+*.iml
+
+# -------------------------
+# Jupyter Notebooks
+# -------------------------
+.ipynb_checkpoints/
+
+# -------------------------
+# Build / Dist
+# -------------------------
+build/
+dist/
+*.egg-info/
+
+# -------------------------
+# ADK model cache (if any)
+# -------------------------
+.cache/

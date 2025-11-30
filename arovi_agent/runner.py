@@ -6,6 +6,8 @@ from google.adk.runners import Runner
 from google.genai import types
 
 from .agents import arovi_root_agent, APP_NAME
+from dotenv import load_dotenv
+load_dotenv()
 
 
 USER_ID = "demo_user"
