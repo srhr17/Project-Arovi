@@ -55,7 +55,7 @@ async def run_arovi_once(
 ):
     runner, session_id = await create_runner()
 
-    # Compose a natural-language query for the root agent
+    # Compose user message
     pieces = [f"Generate a calm, public-health daily briefing for {city}"]
     if state:
         pieces.append(f"in the state/region {state}")
@@ -68,28 +68,46 @@ async def run_arovi_once(
 
     user_message = " ".join(pieces)
 
-    # The ADK Runner expects a list of Content messages (google.genai.types)
+    from google.genai import types
+
     content = types.Content(
         role="user",
-        parts=[types.Part.from_text(user_message)],
+        parts=[types.Part.from_text(text=user_message)],
     )
 
     print(f"\n=== Arovi input ===\n{user_message}\n")
 
-    event_stream = runner.run(content=content, session_id=session_id)
+    event_stream = runner.run(
+        user_id=USER_ID,
+        session_id=session_id,
+        new_message=content,
+    )
 
-    final_briefing = None
-    async for event in event_stream:
-        # You can print events for debugging or observability.
-        # For the capstone you might want to show key events only.
+    # Stream events (optional – useful during dev)
+    for event in event_stream:
         if event.content:
-            # This will include the final briefing as well as intermediate text.
             print(event.content)
 
-        # You could also inspect event.metadata to detect the last reply.
+    # 🔥 NEW: after runner finishes, fetch session.state and print final briefing
+    session = await runner.session_service.get_session(
+        app_name=APP_NAME,
+        user_id=USER_ID,
+        session_id=session_id,
+    )
+    state = session.state or {}
 
-    # In a more advanced setup you would fetch session.state from the session_service
-    # after the run is complete and print `briefing_revised` / `briefing_draft` from there.
+    final_briefing = state.get("briefing_revised") or state.get("briefing_draft")
+
+    print("\n\n=== FINAL AROVI BRIEFING ===\n")
+    if final_briefing:
+        print(final_briefing)
+    else:
+        print(
+            "No final briefing found in state. "
+            "Check that combiner_agent and redraft_agent are writing to "
+            "`briefing_draft` / `briefing_revised`."
+        )
+
 
 
 def main():

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 from pydantic import BaseModel, Field
 
 
@@ -24,6 +24,18 @@ class NewsItem(BaseModel):
     )
 
 
+class NewsItemList(BaseModel):
+    """
+    Container for lists of NewsItem, used because ADK's output_schema
+    must be a single BaseModel subclass (not List[NewsItem]).
+    """
+
+    items: List[NewsItem] = Field(
+        default_factory=list,
+        description="List of NewsItem objects.",
+    )
+
+
 class TrendNotes(BaseModel):
     """Summary of trends, risks, positives for drafting."""
 
@@ -34,7 +46,7 @@ class TrendNotes(BaseModel):
 
 
 class BriefingSections(BaseModel):
-    """Logical sections of the daily briefing."""
+    """Logical sections of the daily briefing (kept for future use)."""
 
     section_global: str
     section_us: str

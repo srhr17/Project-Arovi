@@ -1,8 +1,8 @@
-from typing import List, Dict, Any
-from google.adk.tools import FunctionTool, google_search
+# arovi_agent/tools.py
 
-# Built-in tool re-export so agents can import from arovi_agent.tools
-google_search_tool = google_search
+from typing import List, Dict, Any
+
+from google.adk.tools import FunctionTool, google_search
 
 
 def _filter_and_dedupe_items_impl(
@@ -18,7 +18,7 @@ def _filter_and_dedupe_items_impl(
       - Returns the filtered items + some basic counts.
 
     The calling agent is responsible for taking `filtered_items` from the
-    tool result and storing them in session.state (e.g., as `filtered_items`).
+    tool result and storing them in session.state (e.g., as `tagged_items`).
     """
     seen = set()
     filtered: List[Dict[str, Any]] = []
@@ -46,5 +46,12 @@ def _filter_and_dedupe_items_impl(
     }
 
 
-# Wrap our function in an ADK FunctionTool so LlmAgents can call it.
+# Built-in Google Search tool from ADK (this is the *real* tool object)
+# Use this in LlmAgent.tools=[google_search]
+# NOTE: google_search only works with Gemini 2.x models.
+# See ADK docs "Built-in tools → Google Search".
+# https://google.github.io/adk-docs/tools/built-in-tools/ 
+google_search = google_search
+
+# Wrap our Python function as an ADK FunctionTool
 filter_and_dedupe_tool = FunctionTool(func=_filter_and_dedupe_items_impl)
