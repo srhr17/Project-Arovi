@@ -16,8 +16,7 @@ It showcases:
   - A **custom FunctionTool** (`filter_and_dedupe_tool`) for deterministic news filtering and deduplication.
 
 - **Sessions & Memory**
-  - Uses `InMemorySessionService` and `Runner` to manage sessions and agent execution. :contentReference[oaicite:2]{index=2}  
-  - Designed to be compatible with `VertexAiMemoryBankService` (Memory Bank) for long-term memory (see comments in `runner.py`). :contentReference[oaicite:3]{index=3}  
+  - Uses `InMemorySessionService` and `Runner` to manage sessions and agent 
 
 - **Context engineering**
   - Uses structured state keys (`items_*`, `tagged_items`, `trend_notes`, `history_summary`, etc.).
@@ -79,10 +78,6 @@ pip install -r requirements.txt
 
 ```bash
 export GOOGLE_API_KEY="YOUR_API_KEY"
-# and optionally:
-# export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-# export GOOGLE_CLOUD_PROJECT="your-project"
-# export GOOGLE_CLOUD_LOCATION="us-central1"
 ```
 
 3. Run the test harness:
