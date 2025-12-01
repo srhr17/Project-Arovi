@@ -13,7 +13,6 @@ from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event
 from google.adk.tools.agent_tool import AgentTool
 from google.genai import types
-
 from .models import NewsItemList, TrendNotes
 from .tools import google_search, filter_and_dedupe_tool
 
@@ -554,58 +553,50 @@ risk_loop_agent = LoopAgent(
 # ---------------------------------------------------------------------------
 
 class MetricsAgent(BaseAgent):
-    """
-    Custom agent for simple metrics & observability.
-
-    It reads tagging + risk state and writes a small summary
-    to session.state["metrics_summary"], and emits a human-readable Event.
-    """
-
     name: str = "metrics_agent"
-    description: str = "Computes and logs Arovi metrics."
+    description: str = "Summarize metrics for observability and expose final briefing in state."
 
     async def _run_async_impl(
-        self, context: InvocationContext
+        self,
+        ctx: InvocationContext,
     ) -> AsyncGenerator[Event, None]:
-        state: Dict[str, Any] = context.session.state or {}
+        # Get current state as a dict-like object
+        state: Dict[str, Any] = ctx.session.state or {}
 
-        tagged_items_obj = state.get("tagged_items") or {}
-        items = tagged_items_obj.get("items") if isinstance(tagged_items_obj, dict) else []
-        items = items or []
+        # --- Build simple metrics from existing state ---
+        tagged_items = state.get("tagged_items") or {}
+        items = tagged_items.get("items", [])
+        items_by_region: Dict[str, int] = {}
+        for item in items:
+            region = (item.get("region") or "unknown").lower()
+            items_by_region[region] = items_by_region.get(region, 0) + 1
 
         risk_report = state.get("risk_report") or {}
-        issues = risk_report.get("issues") if isinstance(risk_report, dict) else []
-        issues = issues or []
-
-        region_counts: Dict[str, int] = {}
-        for item in items:
-            if isinstance(item, dict):
-                region = (item.get("region") or "unknown").lower()
-            else:
-                region = "unknown"
-            region_counts[region] = region_counts.get(region, 0) + 1
+        risk_issues = risk_report.get("issues", [])
 
         metrics = {
             "tagged_items_count": len(items),
-            "items_by_region": region_counts,
-            "risk_issue_count": len(issues) if isinstance(issues, list) else 0,
+            "items_by_region": items_by_region,
+            "risk_issue_count": len(risk_issues),
         }
 
-        state["metrics_summary"] = metrics
-
-        text = (
-            "Arovi metrics summary:\n```json\n"
-            + json.dumps(metrics, indent=2)
-            + "\n```"
+        # --- Capture final briefing text if upstream agents wrote it ---
+        briefing_text = (
+            state.get("briefing_revised")
+            or state.get("briefing_draft")
+            or ""
         )
 
-        yield Event(
-            author=self.name,
-            content=types.Content(
-                role="model",
-                parts=[types.Part.from_text(text=text)],
-            ),
-        )
+        # ✅ Mutate session state directly (no async setter)
+        ctx.session.state["metrics_summary"] = metrics
+        ctx.session.state["final_briefing"] = briefing_text
+
+        # ⚠️ IMPORTANT:
+        # We *do not* actually emit any events here, to avoid Pydantic
+        # validation headaches on Event.content.
+        # This dummy, unreachable yield keeps the function an async generator.
+        if False:
+            yield Event(author=self.name, content={})
 
 
 metrics_agent = MetricsAgent()
