@@ -88,3 +88,7 @@ python -m arovi_agent.runner
 
 
 You should see Arovi generate a sample public-health briefing for Chicago (or whatever city you set in runner.py).
+
+## [Example Brief] (https://github.com/srhr17/Project-Arovi/blob/main/Arovi%20Latest%20Brief.pdf)
+
+## [Architechture] (https://github.com/srhr17/Project-Arovi/blob/main/Arovi%20Architecture%20Diagram.png)
