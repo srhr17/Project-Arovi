@@ -45,7 +45,7 @@ The tone is **warm, factual, non-alarmist**. It explicitly avoids:
 - Sensational or speculative claims.
 - Unverified rumors or social-media–only sources.
 
-## Architecture (high level)
+## Architecture (high level) (https://github.com/srhr17/Project-Arovi/blob/main/Arovi%20Architecture%20Diagram.png)
 
 The root agent `arovi_root_agent` delegates to `arovi_workflow_agent` (a `SequentialAgent`):
 
@@ -91,4 +91,3 @@ You should see Arovi generate a sample public-health briefing for Chicago (or wh
 
 ## [Example Brief] (https://github.com/srhr17/Project-Arovi/blob/main/Arovi%20Latest%20Brief.pdf)
 
-## [Architechture] (https://github.com/srhr17/Project-Arovi/blob/main/Arovi%20Architecture%20Diagram.png)
